@@ -7,81 +7,70 @@ import sys
 
 MAX_ATTEMPTS = 3
 
-class InputError(Exception):
-    """Exception raised for errors in the input."""
-    pass
-
 
 def parse_from_input() -> list[str]:
-    """Read whitespace-separated token from stdin.
+    """Parse the user input from stdin and return a list of the numeric strings.
 
-    Return:
-        A list of strings, one string per token
+    Returns:
+        A list of numeric strings.
     """
-    input_str = input().split()
-    return input_str
+    return input().split()
 
 
 def parse_from_argv() -> list[str]:
-    """Read whitespace-separated token from sys.argv.
+    """Parse the user input from command line and return a list of numeric strings.
 
-    Return:
-        A list of strings, one strings per token.
-        Empty, if no argument provided
+    Returns:
+        A list of numeric strings.
+        Empty if no arguments are provided.
     """
-    input_str = sys.argv[1:]
-    return input_str
+    return sys.argv[1:]
 
 
-def string_to_int(input_str: list[str]) -> list[int]:
-    """Convert a list of numeric strings to a list of integers.
+def strings_to_ints(input_strs: list[str]) -> list[int]:
+    """Convert the numeric strings from input to an integer.
 
     Args:
-        input_str: A list of numeric strings.
-    Returns:
-          A list of integers.
-    Raises:
-          ValueError: If input_str contains non-numeric characters.
-    """
-    input_list = []
+        input_strs: A list of numeric strings.
 
-    for i in input_str:
-        input_list.append(int(i))
-    return input_list
+    Returns:
+        A list of integers.
+    """
+    return [int(item) for item in input_strs]
+
 
 def get_numbers() -> list[int]:
-    """Get numbers from argv, or from stdin if argv is empty.
+    """Get a list of integers from user input or command line and convert them to numeric values.
 
-    Return:
-         A list of integers.
+    Returns:
+        A list of integers.
     """
-    input_str_argv = parse_from_argv()
+    input_strs_argv = parse_from_argv()
 
-    if input_str_argv:
+    if input_strs_argv:
         try:
-            input_list = string_to_int(input_str_argv)
-            return input_list
+            return strings_to_ints(input_strs_argv)
         except ValueError:
             print("Only numbers are allowed.")
+            return []
     else:
         attempts_left = MAX_ATTEMPTS
+
         while attempts_left > 0:
             print("Enter the list of numbers:")
-            input_str = parse_from_input()
+            input_strs_stdin = parse_from_input()
 
-            if not input_str:
+            if not input_strs_stdin:
                 print("Error: List must not be empty.")
                 attempts_left -= 1
                 continue
 
             try:
-                input_list = string_to_int(input_str)
-                return input_list
+                return strings_to_ints(input_strs_stdin)
             except ValueError:
                 print("Error: Only numbers are allowed.")
                 attempts_left -= 1
         return []
-
 
 def selection_sort(input_list: list[int]) -> None:
     """Sort the list in place by selection sort.
@@ -109,7 +98,7 @@ def main():
         selection_sort(input_list)
 
         print("Selection-sorted list:")
-        print(input_list)
+        print(*input_list)
     else:
         print("No numbers to sort.")
 
